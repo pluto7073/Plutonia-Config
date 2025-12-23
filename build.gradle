@@ -1,0 +1,166 @@
+plugins {
+	id 'fabric-loom' version '1.10.+'
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	maven { url = "https://maven.quiltmc.org/repository/release" } // Quilt Mappings
+	maven { url = "https://maven.terraformersmc.com/releases/" } // Modmenu, EMI
+	maven { url = "https://maven.parchmentmc.org" } // Parchment
+	maven { url = "https://maven.shedaniel.me/" } // REI
+	maven { url = "https://api.modrinth.com/maven" } // Suggestion Tweaker, Cloth Config, Jade
+	maven { url = "https://maven.blamejared.com/" } // JEI
+}
+
+configurations.configureEach {
+	resolutionStrategy {
+		force("net.fabricmc:fabric-loader:${loader_version}")
+	}
+}
+
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings(loom.layered {
+		if (qm_version != "none")
+			it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
+		if (parchment_version != "none")
+			it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
+		it.officialMojangMappings { nameSyntheticMembers = false }
+	})
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Dev Env
+	modLocalRuntime("maven.modrinth:suggestion-tweaker:$suggestion_tweaker_version")
+	modLocalRuntime("maven.modrinth:cloth-config:$cloth_config_version") { exclude(group: "net.fabricmc.fabric-api") }
+	modLocalRuntime("maven.modrinth:jade:$jade_version")
+	modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version") { exclude(group: "net.fabricmc"); exclude(group: "net.fabricmc.fabric-api") }
+
+	// Don't wanna have more than one at once
+	switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
+		case "jei": modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"); break
+		case "rei": modLocalRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"); break
+		case "emi": modLocalRuntime("dev.emi:emi:${emi_version}"); break
+		case "disabled": break
+		default: println("Unknown recipe viewer specified: ${recipe_viewer}. Must be JEI, REI, EMI, or disabled.")
+	}
+
+	// Recipe Viewers Integration
+
+//	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_fabric_version}")
+//	modCompileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_fabric_version}")
+//	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}")
+//	modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}")
+//	modCompileOnly("dev.emi:emi:${emi_version}")
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDir("src/generated/resources")
+			exclude(".cache")
+		}
+	}
+	testmod {
+		compileClasspath += main.compileClasspath
+		compileClasspath += main.output
+		runtimeClasspath += main.runtimeClasspath
+		runtimeClasspath += main.output
+	}
+}
+
+loom {
+
+	runs {
+		configureEach {
+			vmArg "-XX:+AllowEnhancedClassRedefinition"
+			vmArg "-XX:+IgnoreUnrecognizedVMOptions"
+		}
+
+		datagen {
+			client()
+
+			name "Minecraft Datagen"
+
+			vmArg "-Dfabric-api.datagen"
+			vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+			vmArg "-Dfabric-api.datagen.modid=${modid}"
+		}
+
+		server {
+			runDir "run/server"
+		}
+
+		testmodClient {
+			client()
+			name "Testmod Client"
+			source sourceSets.testmod
+			runDir "run/test"
+		}
+
+		testmodServer {
+			server()
+			name "Testmod Server"
+			source sourceSets.testmod
+			runDir "run/test_server"
+		}
+	}
+
+}
+
+processResources {
+	Map<String, Object> properties = [
+			"version": mod_version,
+			"loader_version": loader_version,
+			"fabric_api_version": fabric_version,
+			"minecraft_version": minecraft_version
+	]
+
+	properties.forEach((k, v) -> inputs.property(k, v))
+
+	filesMatching("fabric.mod.json") {
+		expand properties
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 17
+}
+
+java {
+	withSourcesJar()
+//	withJavadocJar()
+
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
+			from components.java
+		}
+	}
+
+	repositories {
+
+	}
+}

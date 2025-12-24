@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "modid_test",
+	"id": "plutonium_test",
 	"version": "1.0.0",
 	"name": "Example Mod Test",
 	"description": "This is an example description! Tell everyone what your mod is about!",
@@ -16,10 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.test.ExampleModTest"
+          "ml.pluto7073.plutonium.test.ExampleModTest"
 		],
 		"client": [
-			"com.example.test.client.ExampleTestClient"
+          "ml.pluto7073.plutonium.test.client.ExampleTestClient"
+		],
+		"modmenu": [
+			"ml.pluto7073.plutonium.test.TestModMenu"
 		]
 	},
 	"mixins": [

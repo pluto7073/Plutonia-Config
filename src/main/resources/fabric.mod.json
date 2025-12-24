@@ -1,37 +1,39 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "plutonium",
 	"version": "${version}",
-	"name": "Example mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Plutonium",
+	"description": "A simple config library for Pluto's mods.  You shouldn't have to download this separately",
 	"authors": [
-		"Me!"
+		"Pluto7073"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/Pluto7073/plutos-example-mod"
+		"homepage": "https://github.com/pluto7073/Plutonium-Config",
+		"sources": "https://github.com/pluto7073/Plutonium-Config"
 	},
 	"license": "MIT",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/plutonium/icon.png",
 	"environment": "*",
+	"accessWidener": "plutonium.accesswidener",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"ml.pluto7073.plutonium.PlutoniumConfig"
 		],
 		"client": [
-			"com.example.client.ExampleModClient"
+			"ml.pluto7073.plutonium.client.PlutoniumClient"
 		]
 	},
-	"mixins": [
-		"modid.mixins.json"
-	],
+	"mixins": [],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~${minecraft_version}",
 		"java": ">=17",
-		"fabric-api": ">=${fabric_api_version"
+		"fabric-api": ">=${fabric_api_version}"
 	},
-	"suggests": {
-		"another-mod": "*"
+	"custom": {
+		"modmenu": {
+			"badges": [ "library" ],
+			"update_checker": false
+		}
 	}
 }

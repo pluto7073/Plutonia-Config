@@ -1,0 +1,18 @@
+{
+  "option.plutonium_test.common.exampleBooleanOption": "Boolean Option",
+  "option.plutonium_test.common.exampleBooleanOption.desc": "Tooltip!",
+  "option.plutonium_test.common.exampleInt": "Int Option",
+  "option.plutonium_test.common.exampleInt.desc": "Tooltip!!",
+  "option.plutonium_test.common.exampleDouble": "Double Option",
+  "option.plutonium_test.common.exampleDouble.desc": "Tooltip!!!",
+  "option.plutonium_test.common.exampleIntSlider": "Int Slider",
+  "option.plutonium_test.common.exampleIntSlider.desc": "Min: 0, Max: 10",
+  "option.plutonium_test.common.exampleString": "String Option",
+  "option.plutonium_test.common.exampleEnum": "Enum Option",
+  "option.pluotnium_test.common.exampleEnum.opt1": "Option 1",
+  "option.plutonium_test.common.exampleEnum.opt2": "Option 2",
+  "option.plutonium_test.common.exampleEnum.opt3": "Option 3",
+  "option.plutonium_test.client.renderExampleThings": "Example With True Default",
+  "option.plutonium_test.client.tickLengthOfDay": "Example Int With Number Default",
+  "option.plutonium_test.client.tickLengthOfDay.desc": "Another Toolip!"
+}

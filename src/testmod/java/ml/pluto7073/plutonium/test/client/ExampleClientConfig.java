@@ -2,11 +2,10 @@ package ml.pluto7073.plutonium.test.client;
 
 import ml.pluto7073.plutonium.annotations.BooleanOption;
 import ml.pluto7073.plutonium.annotations.IntOption;
-import ml.pluto7073.plutonium.config.ClientConfig;
+import ml.pluto7073.plutonium.config.JointClientConfig;
 import ml.pluto7073.plutonium.test.ExampleModTest;
-import org.apache.logging.log4j.Logger;
 
-public class ExampleClientConfig extends ClientConfig {
+public class ExampleClientConfig extends JointClientConfig {
 
     public static final ExampleClientConfig INSTANCE = new ExampleClientConfig();
 
@@ -14,7 +13,7 @@ public class ExampleClientConfig extends ClientConfig {
     @IntOption(defaultVal = 24000) public int tickLengthOfDay;
 
     private ExampleClientConfig() {
-        super("plutonium_test", ExampleModTest.LOGGER);
+        super("plutonium_test", ExampleModTest.LOGGER, SimpleClientConfig.INSTANCE);
     }
 
 }

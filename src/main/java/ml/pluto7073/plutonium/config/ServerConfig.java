@@ -54,6 +54,13 @@ public class ServerConfig extends AbstractConfig {
     }
 
     @Override
+    public void load() {
+        if (!copy) {
+            super.load();
+        }
+    }
+
+    @Override
     public void save() {
         if (!copy) {
             super.save();

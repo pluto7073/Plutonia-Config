@@ -14,5 +14,8 @@
   "option.plutonium_test.common.exampleEnum.opt3": "Option 3",
   "option.plutonium_test.client.renderExampleThings": "Example With True Default",
   "option.plutonium_test.client.tickLengthOfDay": "Example Int With Number Default",
-  "option.plutonium_test.client.tickLengthOfDay.desc": "Another Toolip!"
+  "option.plutonium_test.client.tickLengthOfDay.desc": "Another Toolip!",
+  "option.plutonium_test.common.configOption1": "Config String 1",
+  "option.plutonium_test.common.configOption1.desc": "This should show up once",
+  "option.plutonium_test.common.booleanOption": "Boolean No Tooltip!"
 }

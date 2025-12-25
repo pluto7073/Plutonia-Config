@@ -8,9 +8,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import java.util.Objects;
 
@@ -32,6 +30,7 @@ public class ServerboundPackets {
 
                 UpdateConfigPacket packet = UPDATE_CONFIG.read(buf);
                 packet.config.logger.info("Received updated server config for {} from {}", packet.config().configName, player.getGameProfile().getName());
+                if (packet.config.getType().isManaged()) return;
                 ClientboundUpdateConfigPacket newPacket = new ClientboundUpdateConfigPacket(packet.config);
                 for (ServerPlayer p : server.getPlayerList().getPlayers()) {
                     ServerPlayNetworking.send(p, newPacket);
@@ -43,6 +42,7 @@ public class ServerboundPackets {
         ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, manager) -> {
             PlutoniumConfig.SERVER_CONFIG_TYPES.forEach(type -> {
                 if (type.serverConfig == null) return;
+                if (type.isManaged()) return;
                 type.serverConfig.logger.info("Reloading config {}", type.serverConfig.configName);
                 type.serverConfig.load();
             });
@@ -51,6 +51,7 @@ public class ServerboundPackets {
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, b) -> {
             PlutoniumConfig.SERVER_CONFIG_TYPES.forEach(type -> {
                 if (type.serverConfig == null) return;
+                if (type.isManaged()) return;
                 ClientboundUpdateConfigPacket packet = new ClientboundUpdateConfigPacket(type.serverConfig);
                 ServerPlayNetworking.send(player, packet);
             });

@@ -1,9 +1,10 @@
-package ml.pluto7073.plutonium.test;
+package ml.pluto7073.plutonium.test.config;
 
 import ml.pluto7073.plutonium.annotations.*;
-import ml.pluto7073.plutonium.config.ServerConfig;
+import ml.pluto7073.plutonium.config.JointServerConfig;
+import ml.pluto7073.plutonium.test.ExampleModTest;
 
-public class ExampleConfig extends ServerConfig {
+public class ExampleConfig extends JointServerConfig {
 
     public static final ExampleConfig INSTANCE = new ExampleConfig();
 
@@ -15,7 +16,7 @@ public class ExampleConfig extends ServerConfig {
     @EnumOption("OPT1") public TestEnum exampleEnum;
 
     public ExampleConfig() {
-        super("plutonium_test", ExampleModTest.LOGGER);
+        super("plutonium_test", ExampleModTest.LOGGER, ExampleModTest.SIMPLE_CONFIG_1);
     }
 
     public enum TestEnum {

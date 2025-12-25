@@ -42,8 +42,12 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
             ConfigCategory clientCategory =
                     builder.getOrCreateCategory(Component.translatable("title.plutonium.client"));
 
-            client.fields.forEach((key, instance) ->
-                    addConfigEntry("client." + key, instance, clientCategory, entryBuilder));
+            if (client.getSubCategories() != null) {
+
+            } else {
+                client.getFields().forEach((key, instance) ->
+                        addConfigEntry("client." + key, instance, clientCategory, entryBuilder));
+            }
         }
 
         ServerConfig server = null;
@@ -60,7 +64,7 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
             ConfigCategory serverCategory =
                     builder.getOrCreateCategory(Component.translatable("title.plutonium.server"));
 
-            server.fields.forEach((key, instance) ->
+            server.getFields().forEach((key, instance) ->
                     addConfigEntry("common." + key, instance, serverCategory, entryBuilder));
         }
 
@@ -76,17 +80,21 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
         return builder.build();
     }
 
+    private void addFromSubCategories(AbstractConfig config, ConfigCategory category, ConfigEntryBuilder builder) {
+
+    }
+
     private void addConfigEntry(String key, AbstractConfig.OptionInstance instance, ConfigCategory category, ConfigEntryBuilder builder) {
         if (instance instanceof AbstractConfig.BooleanInstance bool) {
             category.addEntry(builder.startBooleanToggle(translatable(key), bool.getValue())
                     .setDefaultValue((boolean) bool.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                     .setSaveConsumer(bool::setValue)
                     .build());
         } else if (instance instanceof AbstractConfig.DoubleInstance doubleInst) {
             category.addEntry(builder.startDoubleField(translatable(key), doubleInst.getValue())
                     .setDefaultValue((double) doubleInst.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                     .setSaveConsumer(d -> {
                         doubleInst.setValue(d > doubleInst.getMaxVal() && doubleInst.getMaxVal() > doubleInst.getMinVal() ? doubleInst.getMaxVal() :
                                 (d < doubleInst.getMinVal() && doubleInst.getMaxVal() > doubleInst.getMinVal() ? doubleInst.getMinVal() : d));
@@ -96,7 +104,7 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
             //noinspection unchecked
             category.addEntry(builder.startEnumSelector(translatable(key), (Class<Enum<?>>) enumInst.getEnumClass(), enumInst.getValue())
                     .setDefaultValue((Enum<?>) enumInst.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                     .setSaveConsumer(enumInst::setValue)
                     .setEnumNameProvider(anEnum -> translatable(key + "." + anEnum.name().toLowerCase(Locale.ROOT)))
                     .build());
@@ -104,13 +112,13 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
             if (intInst.getMaxVal() > intInst.getMinVal()) {
                 category.addEntry(builder.startIntSlider(translatable(key), intInst.getValue(), intInst.getMinVal(), intInst.getMaxVal())
                         .setDefaultValue((Integer) intInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                         .setSaveConsumer(intInst::setValue)
                         .build());
             } else {
                 category.addEntry(builder.startIntField(translatable(key), intInst.getValue())
                         .setDefaultValue((Integer) intInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                         .setSaveConsumer(intInst::setValue)
                         .build());
             }
@@ -118,20 +126,20 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
             if (longInst.getMaxVal() > longInst.getMinVal()) {
                 category.addEntry(builder.startLongSlider(translatable(key), longInst.getValue(), longInst.getMinVal(), longInst.getMaxVal())
                         .setDefaultValue((Long) longInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                         .setSaveConsumer(longInst::setValue)
                         .build());
             } else {
                 category.addEntry(builder.startLongField(translatable(key), longInst.getValue())
                         .setDefaultValue((Long) longInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                         .setSaveConsumer(longInst::setValue)
                         .build());
             }
         } else if (instance instanceof AbstractConfig.StringInstance str) {
             category.addEntry(builder.startStrField(translatable(key), str.getValue())
                     .setDefaultValue((String) str.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : null)
+                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
                     .setSaveConsumer(str::setValue)
                     .build());
         }

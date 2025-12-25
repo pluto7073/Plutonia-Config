@@ -3,21 +3,24 @@ package ml.pluto7073.plutonium.config;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
+import com.mojang.datafixers.util.Pair;
 import ml.pluto7073.plutonium.annotations.*;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.GsonHelper;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public final Map<String, OptionInstance> fields;
+    protected final Map<String, OptionInstance> fields;
     public final String configName;
     public final Logger logger;
 
@@ -51,6 +54,14 @@ public abstract class AbstractConfig {
         }
 
         this.fields = ImmutableMap.copyOf(fields);
+    }
+
+    public @Nullable List<Pair<String, Map<String, OptionInstance>>> getSubCategories() {
+        return null;
+    }
+
+    public @Nullable Map<String, String> getSubCategoryNames() {
+        return null;
     }
 
     public void load() {
@@ -118,6 +129,10 @@ public abstract class AbstractConfig {
         } catch (Exception e) {
             logger.error("Failed to save config for {}", configName, e);
         }
+    }
+
+    public Map<String, OptionInstance> getFields() {
+        return fields;
     }
 
     public void loadValues(Map<String, Object> values) {

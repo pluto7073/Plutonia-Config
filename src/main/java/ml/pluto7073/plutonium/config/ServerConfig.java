@@ -15,11 +15,6 @@ public class ServerConfig extends AbstractConfig {
     protected ServerConfigType type;
 
     public ServerConfig(String modid, Logger logger) {
-        this(modid, logger, false);
-    }
-
-    @ApiStatus.Internal
-    public ServerConfig(String modid, Logger logger, boolean copy) {
         super(modid, "server", logger);
     }
 
@@ -54,7 +49,7 @@ public class ServerConfig extends AbstractConfig {
         buf.writeNbt(serialize());
     }
 
-    public void saveRaw() {
+    public final void saveRaw() {
         if (!copy) save();
     }
 
@@ -62,15 +57,13 @@ public class ServerConfig extends AbstractConfig {
     public void save() {
         if (!copy) {
             super.save();
-        } else {
+        } else if (type == null || !type.isManaged()) {
             ServerboundPackets.UpdateConfigPacket packet = new ServerboundPackets.UpdateConfigPacket(this);
             ClientPlayNetworking.send(packet);
         }
     }
 
-    public void loadFromPacket(FriendlyByteBuf buf) {
-        CompoundTag serialized = buf.readAnySizeNbt();
-        if (serialized == null) return;
+    public void loadFromTag(CompoundTag serialized) {
         HashMap<String, Object> deserialized = new HashMap<>();
 
         for (String key : serialized.getAllKeys()) {
@@ -85,6 +78,12 @@ public class ServerConfig extends AbstractConfig {
         loadValues(deserialized, false);
 
         saveRaw();
+    }
+
+    public void loadFromPacket(FriendlyByteBuf buf) {
+        CompoundTag serialized = buf.readAnySizeNbt();
+        if (serialized == null) return;
+        loadFromTag(serialized);
     }
 
 }

@@ -5,7 +5,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
-import org.apache.logging.log4j.Logger;
 
 import java.util.function.Supplier;
 
@@ -16,13 +15,19 @@ public class ServerConfigType {
 
     public final ServerConfig serverConfig;
     private final Supplier<ServerConfig> factory;
+    private final boolean managed;
 
     @Environment(EnvType.CLIENT)
     private ServerConfig copy;
 
     public ServerConfigType(ServerConfig existing, Supplier<ServerConfig> factory) {
+        this(existing, factory, false);
+    }
+
+    public ServerConfigType(ServerConfig existing, Supplier<ServerConfig> factory, boolean managed) {
         this.serverConfig = existing;
         this.factory = factory;
+        this.managed = managed;
         if (existing != null) existing.type = this;
     }
 
@@ -50,4 +55,7 @@ public class ServerConfigType {
         return serverConfig;
     }
 
+    public boolean isManaged() {
+        return managed;
+    }
 }

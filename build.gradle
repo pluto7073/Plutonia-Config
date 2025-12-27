@@ -162,12 +162,17 @@ jar {
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
+			artifactId = project.modid
 			from components.java
+			pom.withXml {
+				asNode().dependencies.'*'.each() {
+					it.parent.remove(it)
+				}
+			}
 		}
 	}
 
 	repositories {
-
+		maven { url = System.getenv("PUBLISH_LOCATION") }
 	}
 }

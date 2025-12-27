@@ -23,7 +23,7 @@ public record ClientboundUpdateConfigPacket(ServerConfig config) implements Fabr
 
     public static ClientboundUpdateConfigPacket read(FriendlyByteBuf buf) {
         ResourceLocation configId = buf.readResourceLocation();
-        ServerConfigType type = PlutoniumConfig.SERVER_CONFIG_TYPES.get(configId);
+        ServerConfigType<?> type = PlutoniumConfig.SERVER_CONFIG_TYPES.get(configId);
         if (type == null) {
             throw new IllegalStateException("Unknown config " + configId);
         }

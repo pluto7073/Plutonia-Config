@@ -14,11 +14,11 @@ import java.util.Map;
 
 public class JointServerConfig extends ServerConfig {
 
-    protected final List<ServerConfigType> managedConfigs;
+    protected final List<ServerConfigType<?>> managedConfigs;
 
-    public JointServerConfig(String modid, Logger logger, ServerConfigType... managedConfigs) {
-        super(modid, logger);
-        for (ServerConfigType managedConfig : managedConfigs) {
+    public JointServerConfig(String modid, Logger logger, ServerConfigType<?> type, boolean copy, ServerConfigType<?>... managedConfigs) {
+        super(modid, logger, type, copy);
+        for (ServerConfigType<?> managedConfig : managedConfigs) {
             if (!managedConfig.isManaged()) {
                 throw new IllegalArgumentException("All configs added to a JointConfig must be managed, " + managedConfig.serverConfig.configName + " is not");
             }
@@ -26,8 +26,8 @@ public class JointServerConfig extends ServerConfig {
         this.managedConfigs = new ArrayList<>(List.of(managedConfigs));
     }
 
-    public void addManagedConfig(ServerConfigType... managedConfigs) {
-        for (ServerConfigType managedConfig : managedConfigs) {
+    public void addManagedConfig(ServerConfigType<?>... managedConfigs) {
+        for (ServerConfigType<?> managedConfig : managedConfigs) {
             if (!managedConfig.isManaged()) {
                 throw new IllegalArgumentException("All configs added to a JointConfig must be managed, " + managedConfig.serverConfig.configName + " is not");
             }
@@ -40,7 +40,7 @@ public class JointServerConfig extends ServerConfig {
     public void save() {
         super.save();
 
-        for (ServerConfigType managedConfig : managedConfigs) {
+        for (ServerConfigType<?> managedConfig : managedConfigs) {
             if (!copy) {
                 managedConfig.serverConfig.save();
             }
@@ -51,7 +51,7 @@ public class JointServerConfig extends ServerConfig {
     public void load() {
         super.load();
 
-        for (ServerConfigType managedConfig : managedConfigs) {
+        for (ServerConfigType<?> managedConfig : managedConfigs) {
             if (!copy) {
                 managedConfig.serverConfig.load();
             }
@@ -61,7 +61,7 @@ public class JointServerConfig extends ServerConfig {
     @Override
     public void writeToPacket(FriendlyByteBuf buf) {
         super.writeToPacket(buf); // Write this config
-        for (ServerConfigType managedConfig : managedConfigs) {
+        for (ServerConfigType<?> managedConfig : managedConfigs) {
             // Loop through managed configs
             ResourceLocation key = PlutoniumConfig.SERVER_CONFIG_TYPES.getKey(managedConfig);
             if (key == null) {
@@ -87,7 +87,7 @@ public class JointServerConfig extends ServerConfig {
                 // Loop until buf is read in full or end id reached
                 ResourceLocation id = buf.readResourceLocation();
                 if ("minecraft:empty".equals(id.toString())) break;
-                ServerConfigType type = PlutoniumConfig.SERVER_CONFIG_TYPES.get(id);
+                ServerConfigType<?> type = PlutoniumConfig.SERVER_CONFIG_TYPES.get(id);
                 if (type == null || !type.isManaged()) throw new IllegalStateException(); // This shouldn't happen but just in case
                 if (copy) {
                     type.updateCopy(buf);
@@ -105,7 +105,7 @@ public class JointServerConfig extends ServerConfig {
     public Map<String, OptionInstance> getFields() {
         HashMap<String, OptionInstance> allFields = new HashMap<>(super.getFields());
 
-        for (ServerConfigType config : managedConfigs) {
+        for (ServerConfigType<?> config : managedConfigs) {
             if (copy) {
                 allFields.putAll(config.getCopy().fields);
             } else {

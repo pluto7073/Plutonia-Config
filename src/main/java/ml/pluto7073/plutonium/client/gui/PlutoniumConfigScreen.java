@@ -21,10 +21,10 @@ import java.util.function.Function;
 public class PlutoniumConfigScreen implements Function<Screen, Screen> {
 
     private final ClientConfig client;
-    private final ServerConfigType serverType;
+    private final ServerConfigType<?> serverType;
     private final String modid;
 
-    public PlutoniumConfigScreen(ClientConfig client, ServerConfigType serverType, String modid) {
+    public PlutoniumConfigScreen(ClientConfig client, ServerConfigType<?> serverType, String modid) {
         this.client = client;
         this.serverType = serverType;
         this.modid = modid;
@@ -46,7 +46,7 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
 
             } else {
                 client.getFields().forEach((key, instance) ->
-                        addConfigEntry("client." + key, instance, clientCategory, entryBuilder));
+                        addConfigEntry(client, "client." + key, instance, clientCategory, entryBuilder));
             }
         }
 
@@ -65,7 +65,7 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
                     builder.getOrCreateCategory(Component.translatable("title.plutonium.server"));
 
             server.getFields().forEach((key, instance) ->
-                    addConfigEntry("common." + key, instance, serverCategory, entryBuilder));
+                    addConfigEntry(cfg, "common." + key, instance, serverCategory, entryBuilder));
         }
 
         builder.setSavingRunnable(() -> {
@@ -84,17 +84,17 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
 
     }
 
-    private void addConfigEntry(String key, AbstractConfig.OptionInstance instance, ConfigCategory category, ConfigEntryBuilder builder) {
+    private void addConfigEntry(AbstractConfig config, String key, AbstractConfig.OptionInstance instance, ConfigCategory category, ConfigEntryBuilder builder) {
         if (instance instanceof AbstractConfig.BooleanInstance bool) {
-            category.addEntry(builder.startBooleanToggle(translatable(key), bool.getValue())
+            category.addEntry(builder.startBooleanToggle(translatable(config.modid, key), bool.getValue())
                     .setDefaultValue((boolean) bool.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                    .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                     .setSaveConsumer(bool::setValue)
                     .build());
         } else if (instance instanceof AbstractConfig.DoubleInstance doubleInst) {
-            category.addEntry(builder.startDoubleField(translatable(key), doubleInst.getValue())
+            category.addEntry(builder.startDoubleField(translatable(config.modid, key), doubleInst.getValue())
                     .setDefaultValue((double) doubleInst.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                    .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                     .setSaveConsumer(d -> {
                         doubleInst.setValue(d > doubleInst.getMaxVal() && doubleInst.getMaxVal() > doubleInst.getMinVal() ? doubleInst.getMaxVal() :
                                 (d < doubleInst.getMinVal() && doubleInst.getMaxVal() > doubleInst.getMinVal() ? doubleInst.getMinVal() : d));
@@ -102,50 +102,50 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
                     .build());
         } else if (instance instanceof AbstractConfig.EnumInstance enumInst) {
             //noinspection unchecked
-            category.addEntry(builder.startEnumSelector(translatable(key), (Class<Enum<?>>) enumInst.getEnumClass(), enumInst.getValue())
+            category.addEntry(builder.startEnumSelector(translatable(config.modid, key), (Class<Enum<?>>) enumInst.getEnumClass(), enumInst.getValue())
                     .setDefaultValue((Enum<?>) enumInst.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                    .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                     .setSaveConsumer(enumInst::setValue)
-                    .setEnumNameProvider(anEnum -> translatable(key + "." + anEnum.name().toLowerCase(Locale.ROOT)))
+                    .setEnumNameProvider(anEnum -> translatable(config.modid, key + "." + anEnum.name().toLowerCase(Locale.ROOT)))
                     .build());
         } else if (instance instanceof AbstractConfig.IntInstance intInst) {
             if (intInst.getMaxVal() > intInst.getMinVal()) {
-                category.addEntry(builder.startIntSlider(translatable(key), intInst.getValue(), intInst.getMinVal(), intInst.getMaxVal())
+                category.addEntry(builder.startIntSlider(translatable(config.modid, key), intInst.getValue(), intInst.getMinVal(), intInst.getMaxVal())
                         .setDefaultValue((Integer) intInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                        .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                         .setSaveConsumer(intInst::setValue)
                         .build());
             } else {
-                category.addEntry(builder.startIntField(translatable(key), intInst.getValue())
+                category.addEntry(builder.startIntField(translatable(config.modid, key), intInst.getValue())
                         .setDefaultValue((Integer) intInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                        .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                         .setSaveConsumer(intInst::setValue)
                         .build());
             }
         } else if (instance instanceof AbstractConfig.LongInstance longInst) {
             if (longInst.getMaxVal() > longInst.getMinVal()) {
-                category.addEntry(builder.startLongSlider(translatable(key), longInst.getValue(), longInst.getMinVal(), longInst.getMaxVal())
+                category.addEntry(builder.startLongSlider(translatable(config.modid, key), longInst.getValue(), longInst.getMinVal(), longInst.getMaxVal())
                         .setDefaultValue((Long) longInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                        .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                         .setSaveConsumer(longInst::setValue)
                         .build());
             } else {
-                category.addEntry(builder.startLongField(translatable(key), longInst.getValue())
+                category.addEntry(builder.startLongField(translatable(config.modid, key), longInst.getValue())
                         .setDefaultValue((Long) longInst.getDefaultVal())
-                        .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                        .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                         .setSaveConsumer(longInst::setValue)
                         .build());
             }
         } else if (instance instanceof AbstractConfig.StringInstance str) {
-            category.addEntry(builder.startStrField(translatable(key), str.getValue())
+            category.addEntry(builder.startStrField(translatable(config.modid, key), str.getValue())
                     .setDefaultValue((String) str.getDefaultVal())
-                    .setTooltip(instance.hasTooltip() ? translatable(key + ".desc") : Component.empty())
+                    .setTooltip(instance.hasTooltip() ? translatable(config.modid, key + ".desc") : Component.empty())
                     .setSaveConsumer(str::setValue)
                     .build());
         }
     }
 
-    private Component translatable(String name) {
+    private Component translatable(String modid, String name) {
         return Component.translatable("option." + modid + "." + name);
     }
 

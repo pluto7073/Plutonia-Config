@@ -72,7 +72,7 @@ public class ServerboundPackets {
 
         public static UpdateConfigPacket read(FriendlyByteBuf buf) {
             ResourceLocation configId = buf.readResourceLocation();
-            ServerConfigType type = PlutoniumConfig.SERVER_CONFIG_TYPES.get(configId);
+            ServerConfigType<?> type = PlutoniumConfig.SERVER_CONFIG_TYPES.get(configId);
             if (type == null) {
                 throw new IllegalStateException("Unknown config type");
             }

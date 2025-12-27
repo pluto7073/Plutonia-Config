@@ -11,14 +11,16 @@ import java.util.HashMap;
 
 public class ServerConfig extends AbstractConfig {
 
-    protected boolean copy = false;
-    protected ServerConfigType type;
+    protected final boolean copy;
+    protected ServerConfigType<?> type;
 
-    public ServerConfig(String modid, Logger logger) {
+    public ServerConfig(String modid, Logger logger, ServerConfigType<?> type, boolean copy) {
         super(modid, "server", logger);
+        this.type = type;
+        this.copy = copy;
     }
 
-    public ServerConfigType getType() {
+    public ServerConfigType<?> getType() {
         return type;
     }
 

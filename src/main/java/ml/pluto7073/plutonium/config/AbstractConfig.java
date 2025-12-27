@@ -22,11 +22,13 @@ public abstract class AbstractConfig {
 
     protected final Map<String, OptionInstance> fields;
     public final String configName;
+    public final String modid;
     public final Logger logger;
 
     public AbstractConfig(String modid, String name, Logger logger) {
         HashMap<String, OptionInstance> fields = new HashMap<>();
         this.configName = modid + "_" + name;
+        this.modid = modid;
         this.logger = logger;
 
         for (Field field : this.getClass().getFields()) {

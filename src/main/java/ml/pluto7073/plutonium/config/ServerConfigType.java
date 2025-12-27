@@ -6,25 +6,27 @@ import net.fabricmc.api.Environment;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ServerConfigType {
+public class ServerConfigType<C extends ServerConfig> {
 
-    public static final ServerConfigType DEFAULT =
-            Registry.register(PlutoniumConfig.SERVER_CONFIG_TYPES, PlutoniumConfig.id("plutonium"), new ServerConfigType(null, null));
+    public static final ServerConfigType<ServerConfig> DEFAULT =
+            Registry.register(PlutoniumConfig.SERVER_CONFIG_TYPES, PlutoniumConfig.id("plutonium"), new ServerConfigType<>(null, null));
 
-    public final ServerConfig serverConfig;
-    private final Supplier<ServerConfig> factory;
+    public final C serverConfig;
+    private final BiFunction<ServerConfigType<?>, Boolean, C> factory;
     private final boolean managed;
 
     @Environment(EnvType.CLIENT)
-    private ServerConfig copy;
+    private C copy;
 
-    public ServerConfigType(ServerConfig existing, Supplier<ServerConfig> factory) {
+    public ServerConfigType(C existing, BiFunction<ServerConfigType<?>, Boolean, C> factory) {
         this(existing, factory, false);
     }
 
-    public ServerConfigType(ServerConfig existing, Supplier<ServerConfig> factory, boolean managed) {
+    public ServerConfigType(C existing, BiFunction<ServerConfigType<?>, Boolean, C> factory, boolean managed) {
         this.serverConfig = existing;
         this.factory = factory;
         this.managed = managed;
@@ -32,10 +34,9 @@ public class ServerConfigType {
     }
 
     @Environment(EnvType.CLIENT)
-    public ServerConfig updateCopy(FriendlyByteBuf buf) {
+    public C updateCopy(FriendlyByteBuf buf) {
         if (copy == null) {
-            copy = factory.get();
-            copy.copy = true;
+            copy = factory.apply(this, true);
             copy.type = this;
         }
 
@@ -45,11 +46,11 @@ public class ServerConfigType {
     }
 
     @Environment(EnvType.CLIENT)
-    public ServerConfig getCopy() {
+    public C getCopy() {
         return copy;
     }
 
-    public ServerConfig updateOriginal(FriendlyByteBuf buf) {
+    public C updateOriginal(FriendlyByteBuf buf) {
         serverConfig.loadFromPacket(buf);
 
         return serverConfig;

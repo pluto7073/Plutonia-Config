@@ -15,10 +15,10 @@ import org.apache.logging.log4j.Logger;
 public class ExampleModTest implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Test Logger");
 
-    public static final ServerConfigType SIMPLE_CONFIG_1 = new ServerConfigType(SimpleConfig.INSTANCE_1, SimpleConfig::new, true);
-    public static final ServerConfigType SIMPLE_CONFIG_2 = new ServerConfigType(SimpleConfig2.INSTANCE_2, SimpleConfig2::new, true);
+    public static final ServerConfigType<SimpleConfig> SIMPLE_CONFIG_1 = new ServerConfigType<>(SimpleConfig.INSTANCE_1, SimpleConfig::new, true);
+    public static final ServerConfigType<SimpleConfig2> SIMPLE_CONFIG_2 = new ServerConfigType<>(SimpleConfig2.INSTANCE_2, SimpleConfig2::new, true);
 
-    public static final ServerConfigType CONFIG_TYPE = new ServerConfigType(ExampleConfig.INSTANCE, ExampleConfig::new);
+    public static final ServerConfigType<ExampleConfig> CONFIG_TYPE = new ServerConfigType<>(ExampleConfig.INSTANCE, ExampleConfig::new);
 
     @Override
     public void onInitialize() {

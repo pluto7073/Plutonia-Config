@@ -16,8 +16,8 @@ public class PlutoniumConfig implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Plutonium");
 	public static final String MOD_ID = "plutonium";
 
-	public static final ResourceKey<Registry<ServerConfigType>> SERVER_CONFIG_TYPE_KEY = ResourceKey.createRegistryKey(id("server_config_type"));
-	public static final Registry<ServerConfigType> SERVER_CONFIG_TYPES = BuiltInRegistries.registerSimple(SERVER_CONFIG_TYPE_KEY, registry -> ServerConfigType.DEFAULT);
+	public static final ResourceKey<Registry<ServerConfigType<?>>> SERVER_CONFIG_TYPE_KEY = ResourceKey.createRegistryKey(id("server_config_type"));
+	public static final Registry<ServerConfigType<?>> SERVER_CONFIG_TYPES = BuiltInRegistries.registerSimple(SERVER_CONFIG_TYPE_KEY, registry -> ServerConfigType.DEFAULT);
 
 	@Override
 	public void onInitialize() {

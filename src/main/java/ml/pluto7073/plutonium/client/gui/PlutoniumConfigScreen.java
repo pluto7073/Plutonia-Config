@@ -35,7 +35,7 @@ public class PlutoniumConfigScreen implements Function<Screen, Screen> {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Component.translatable("title." + modid + ".config"))
-                .setDefaultBackgroundTexture(new ResourceLocation("minecraft:textures/gui/options_background.png"));
+                .setDefaultBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/gui/options_background.png"));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         if (client != null) {

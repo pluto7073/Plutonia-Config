@@ -30,6 +30,6 @@ public class ExampleModTest implements ModInitializer {
     }
 
     public static ResourceLocation id(String name) {
-        return new ResourceLocation("plutonium_test", name);
+        return ResourceLocation.fromNamespaceAndPath("plutonium_test", name);
     }
 }

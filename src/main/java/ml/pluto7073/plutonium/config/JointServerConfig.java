@@ -76,7 +76,7 @@ public class JointServerConfig extends ServerConfig {
             }
         }
 
-        buf.writeResourceLocation(new ResourceLocation("empty"));
+        buf.writeResourceLocation(ResourceLocation.withDefaultNamespace("empty"));
     }
 
     @Override

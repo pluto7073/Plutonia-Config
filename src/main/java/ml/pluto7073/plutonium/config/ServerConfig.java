@@ -90,7 +90,7 @@ public class ServerConfig extends AbstractConfig {
     }
 
     public void loadFromPacket(FriendlyByteBuf buf) {
-        CompoundTag serialized = buf.readAnySizeNbt();
+        CompoundTag serialized = buf.readNbt();
         if (serialized == null) return;
         loadFromTag(serialized);
     }

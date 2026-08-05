@@ -24,7 +24,7 @@ public class ServerboundPackets {
                 if (!player.hasPermissions(2) && !server1.isSingleplayer()) {
                     ServerConfig config = Objects.requireNonNull(PlutoniumConfig.SERVER_CONFIG_TYPES.get(buf.readResourceLocation())).serverConfig;
                     config.logger.warn("Unauthorized user {} tried to update config {}", player.getGameProfile().getName(), config.configName);
-                    buf.readAnySizeNbt();
+                    buf.readNbt();
                     return;
                 }
 

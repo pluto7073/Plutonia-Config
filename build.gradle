@@ -31,9 +31,9 @@ dependencies {
 	mappings(loom.layered {
 		if (qm_version != "none")
 			it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
+		it.officialMojangMappings { nameSyntheticMembers = false }
 		if (parchment_version != "none")
 			it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
-		it.officialMojangMappings { nameSyntheticMembers = false }
 	})
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 

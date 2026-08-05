@@ -17,6 +17,7 @@ repositories {
 	maven { url = "https://maven.shedaniel.me/" } // REI
 	maven { url = "https://api.modrinth.com/maven" } // Suggestion Tweaker, Cloth Config, Jade
 	maven { url = "https://maven.blamejared.com/" } // JEI
+	maven { url = "https://maven.nucleoid.xyz/" }
 }
 
 configurations.configureEach {

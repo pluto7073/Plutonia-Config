@@ -4,6 +4,7 @@ import ml.pluto7073.plutonium.config.ServerConfigType;
 import ml.pluto7073.plutonium.networking.serverbound.ServerboundPackets;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -21,9 +22,10 @@ public class PlutoniumConfig implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Configs loaded");
+		LOGGER.info("Configs loaded");;
 
-		ServerboundPackets.init();
+		ServerboundPackets.registerPackets();
+		ServerboundPackets.registerReceivers();
 	}
 
 	public static ResourceLocation id(String id) {
